@@ -1,5 +1,5 @@
 function startCall(n, who) {
-  state.modal = null; state.keypadOpen = false; state.dial.status = "dialing"; state.dial.number = n; state.dial.contact = who || displayName(lead().contact); state.dial.muted = false; state.dial.elapsed = 0; state.dial.dtmf = ""; renderAll();
+  state.modal = null; state.keypadOpen = false; state.dial.status = "dialing"; state.dial.number = n; state.dial.contact = who || displayName(lead().contact); state.dial.muted = false; state.dial.hold = false; state.dial.elapsed = 0; state.dial.dtmf = ""; state.dial.notes = ""; renderAll();
   setTimeout(() => { if (state.dial.status !== "dialing") return; state.dial.status = "connected"; state.dial.started = Date.now(); startTick(); renderAll(); toast("Connected · " + device().name); }, 1400);
 }
 function startTick() {
@@ -8,8 +8,8 @@ function startTick() {
 }
 function hang() {
   const l = lead(); const dur = fmtElapsed(state.dial.elapsed);
-  if (state.dial.status === "connected") { l.calls.unshift({who: state.dial.contact, dir:"out", dur, when:"Just now", dev: device().name, n: state.dial.number, note:"Logged from dialer."}); l.activity.unshift({when:"Just now", what:`Call · ${state.dial.contact} · ${dur}`}); l.lastAgo = "just now"; }
-  state.dial.status = "idle"; state.dial.elapsed = 0; state.dial.dtmf = ""; state.keypadOpen = false; clearInterval(tick); renderAll(); toast("Call ended");
+  if (state.dial.status === "connected") { l.calls.unshift({who: state.dial.contact, dir:"out", dur, when:"Just now", dev: device().name, n: state.dial.number, note:state.dial.notes || "Logged from dialer."}); l.activity.unshift({when:"Just now", what:`Call · ${state.dial.contact} · ${dur}`}); l.lastAgo = "just now"; }
+  state.dial.status = "idle"; state.dial.elapsed = 0; state.dial.dtmf = ""; state.dial.hold = false; state.dial.notes = ""; state.keypadOpen = false; clearInterval(tick); renderAll(); toast("Call ended");
 }
 function applyComposerSelect(select) {
   if (!select || !state.modal || state.modal.type !== "compose") return;

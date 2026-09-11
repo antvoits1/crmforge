@@ -60,7 +60,7 @@ body {
   overflow: hidden;
 }
 button, [role="button"] { font-family: inherit; cursor: pointer; }
-button:disabled { cursor: not-allowed; opacity: .45; }
+button:disabled { cursor: not-allowed; opacity: 1; }
 input, textarea, select { font-family: inherit; font-size: var(--ui-font-size); }
 a { color: var(--fg); }
 svg { display: block; }

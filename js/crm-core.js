@@ -27,13 +27,16 @@ const state = {
   contactDetail: null,
   emailFolder: "inbox",
   emailDetail: null,
+  composerMenu: false,
+  emojiOpen: false,
+  gifOpen: false,
+  composerAttachments: [],
   keypadOpen: false,
   activityExpanded: false,
   fav: loadFavorites(),
-  follow: Object.fromEntries(LEADS.filter(l => l.follow).map(l => [l.id, l.follow])),
   modal: null,
   drafts: {},
-  dial: { status:"idle", device:"poly", number:"", contact:"", elapsed:0, started:0, muted:false, speaker:false, dtmf:"" }
+  dial: { status:"idle", device:"poly", number:"", contact:"", elapsed:0, started:0, muted:false, hold:false, dtmf:"", notes:"" }
 };
 let tick = null;
 const $ = (id) => document.getElementById(id);
@@ -86,11 +89,12 @@ function ico(name, s=16) {
     sms: '<path d="M4 4h16v12H7l-3 4V4z"/>',
     wa: '<path d="M12 3a8 8 0 0 0-6.9 12.1L4 21l6-1.1A8 8 0 1 0 12 3z"/><path d="M9.2 9.6c.2-.5.3-.5.6-.5h.5c.2 0 .3.1.4.4l.6 1.5c.1.2 0 .4-.1.5l-.4.4c-.1.1-.1.3 0 .4.3.5.8 1 1.3 1.3.2.1.3.1.4 0l.4-.4c.2-.2.4-.2.5-.1l1.5.6c.2.1.4.2.4.4v.5c0 .2 0 .4-.5.6A6 6 0 0 1 9.2 9.6z"/>',
     mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+    hold: '<path d="M7 5h3v14H7zM14 5h3v14h-3z"/>',
     spk: '<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/>',
     grid: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     x: '<path d="M6 6l12 12M18 6 6 18"/>',
-    send: '<path d="M4 12h16M14 6l6 6-6 6"/>',
+    send: '<path d="m3 11 18-8-7 18-3-7-8-3Z"/><path d="m11 14 10-11"/>',
     check: '<path d="M5 12.5l4 4 10-10"/>',
     star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2-4.5-4.4 6.2-.9L12 3z"/>',
     file: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/>',
@@ -100,7 +104,19 @@ function ico(name, s=16) {
     left: '<path d="m15 18-6-6 6-6"/>',
     right: '<path d="m9 18 6-6-6-6"/>',
     back: '<path d="m15 18-6-6 6-6"/><path d="M9 12h10"/>',
-    folder: '<path d="M3 7h7l2 2h9v10H3z"/>'
+    folder: '<path d="M3 7h7l2 2h9v10H3z"/>',
+    callIn: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6.4 6.4l1.2-1.2a2 2 0 0 1 2.1-.4c.8.2 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/><path d="M16 4h4v4M20 4l-6 6"/>',
+    callOut: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6.4 6.4l1.2-1.2a2 2 0 0 1 2.1-.4c.8.2 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/><path d="M14 4h6v6M20 4l-7 7"/>',
+    callMissed: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6.4 6.4l1.2-1.2a2 2 0 0 1 2.1-.4c.8.2 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/><path d="M14 4l6 6M20 4l-6 6"/>',
+    image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m5 18 5-5 3 3 2-2 4 4"/>',
+    camera: '<path d="M4 7h3l2-3h6l2 3h3v13H4z"/><circle cx="12" cy="13" r="4"/>',
+    video: '<rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/>',
+    audio: '<path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/>',
+    smile: '<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/>',
+    gif: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 10H6v4h3v-2H8M12 10v4M15 14v-4h3"/>',
+    transfer: '<path d="M4 8h12M12 4l4 4-4 4M20 16H8M12 12l-4 4 4 4"/>',
+    note: '<path d="M5 3h14v18H5z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+    endcall: '<path d="M5 15c4-4 10-4 14 0"/><path d="m5 15-2 3M19 15l2 3"/>'
   };
   return `<svg class="ui-ico" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${p[name]||""}</svg>`;
 }
@@ -108,7 +124,6 @@ function toast(msg) {
   const el = $("toast"); el.textContent = msg; el.classList.add("show");
   clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 2200);
 }
-function field(k,v){ return `<div class="field"><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`; }
 function companyRow(k,v){ return `<div class="company-row"><span class="k">${esc(k)}</span><span class="v">${v}</span></div>`; }
 function documentIcon() {
   return `<span class="doc-stack" aria-hidden="true"><svg viewBox="0 0 24 26" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5H14l4 4V23H5.5z"/><path d="M14 5.5V10h4"/><path d="M3 3h8.5"/><path d="M3 3v17"/></svg></span>`;
@@ -261,7 +276,7 @@ function placePad() {
   const r = dock.getBoundingClientRect();
   const factor = screenFactor();
   pop.style.left = (r.right / factor - 244) + "px";
-  pop.style.top = (r.bottom / factor - 70 - 12 - 214) + "px";
+  pop.style.top = (r.bottom / factor - 66 - 12 - 214) + "px";
   pop.classList.add("open");
   pop.innerHTML = `<div class="pad">${[["1",""],["2","ABC"],["3","DEF"],["4","GHI"],["5","JKL"],["6","MNO"],["7","PQRS"],["8","TUV"],["9","WXYZ"],["*",""],["0","+"],["#",""]].map(([n,l]) =>
     `<button data-act="dtmf" data-k="${n}">${n}${l?`<small>${l}</small>`:""}</button>`).join("")}</div>`;

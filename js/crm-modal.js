@@ -39,6 +39,10 @@ function renderModal() {
         <p>Scanned file preview. ${esc(f.n)} for ${esc(lead().company)}.</p><div class="scan-lines"></div></div></div></div>`;
     return;
   }
+  if (m.type === "call-notes") {
+    ov.innerHTML = `<div class="modal call-notes-modal"><div class="row-between"><h2>Call Notes</h2><button class="icon-btn" data-act="close" aria-label="Close">${ico("x")}</button></div><textarea id="callNotes" placeholder="Add notes for this call">${esc(state.dial.notes || "")}</textarea><div class="call-notes-actions"><button class="btn" data-act="close">Cancel</button><button class="btn primary" data-act="save-call-notes">Save</button></div></div>`;
+    return;
+  }
   if (m.type === "devices") {
     ov.innerHTML = `<div class="modal"><div class="row-between"><h2 style="font-size:calc(16px * var(--font-factor))">Calling as</h2><button class="icon-btn" data-act="close">${ico("x")}</button></div>
       ${DEVICES.map(d => `<button class="lead-row ${d.id===state.dial.device?"on":""}" data-act="set-device" data-id="${d.id}" style="padding-left:12px"><span class="av" style="background:${d.on?"#0F766E":"#8B949E"}">${ico("phone",14)}</span><span><div class="co">${esc(d.name)}</div><div class="nm">${esc(d.kind)} · ${esc(d.did)} · ${d.on?"On":"Off"}</div></span></button>`).join("")}</div>`;
