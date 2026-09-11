@@ -1,0 +1,43 @@
+name: Assemble Forge CRM 006
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.forge-upload/**'
+      - '.github/workflows/assemble-forge006.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Assemble exact ZIP and publish multi-file source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .forge-upload/part*.b64 | base64 --decode > Forge-CRM-006-20260910-Multi-File.zip
+          test "$(stat -c%s Forge-CRM-006-20260910-Multi-File.zip)" = "43831"
+          unzip -tq Forge-CRM-006-20260910-Multi-File.zip
+          rm -rf .forge-unpack
+          mkdir .forge-unpack
+          unzip -q Forge-CRM-006-20260910-Multi-File.zip -d .forge-unpack
+          src='.forge-unpack/Forge-CRM-006-20260910'
+          rm -rf css js pages project
+          cp -R "$src/css" .
+          cp -R "$src/js" .
+          cp -R "$src/pages" .
+          cp -R "$src/project" .
+          cp "$src/index.html" ./index.html
+          rm -rf .forge-unpack .forge-upload
+          rm -f .github/workflows/assemble-forge006.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Publish exact Forge CRM 006 multi-file build'
+          git push
