@@ -13,22 +13,23 @@
   --ok: #0F766E;
   --bad: #B42318;
   --warn: #B45309;
-  --ink: #1C1F24;
+  --ink: #2A3038;
   --ink-fg: #EDEEEF;
   --font: "Inter",ui-sans-serif,system-ui,sans-serif;
   --mono: "Inter",ui-sans-serif,system-ui,sans-serif;
   --ui-font-size: 16px;
   --font-factor: 1;
   --screen-factor: .96;
-  --dial-h: 75px;
+  --dial-h: 70px;
   --rail-w: 460px;
   --dock-w: 420px;
-  --sidebar-width: 58px;
-  --sidebar-expanded-width: 208px;
+  --sidebar-width: 62px;
+  --sidebar-expanded-width: 214px;
   --content-pad-x: 40px;
   --section-gap-x: 64px;
   --bubble-max: 260px;
   --lead-row-y: 8px;
+  --panel-head-h: 48px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 html[data-screen-scale="wide"] {
