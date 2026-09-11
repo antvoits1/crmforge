@@ -105,9 +105,9 @@ function ico(name, s=16) {
     right: '<path d="m9 18 6-6-6-6"/>',
     back: '<path d="m15 18-6-6 6-6"/><path d="M9 12h10"/>',
     folder: '<path d="M3 7h7l2 2h9v10H3z"/>',
-    callIn: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6.4 6.4l1.2-1.2a2 2 0 0 1 2.1-.4c.8.2 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/><path d="M16 4h4v4M20 4l-6 6"/>',
-    callOut: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6.4 6.4l1.2-1.2a2 2 0 0 1 2.1-.4c.8.2 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/><path d="M14 4h6v6M20 4l-7 7"/>',
-    callMissed: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6.4 6.4l1.2-1.2a2 2 0 0 1 2.1-.4c.8.2 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/><path d="M14 4l6 6M20 4l-6 6"/>',
+    callIn: '<path d="M19 5 8 16"/><path d="M8 10v6h6"/>',
+    callOut: '<path d="M5 19 16 8"/><path d="M10 8h6v6"/>',
+    callMissed: '<path d="M6 7.5c3.7-2.2 8.3-2.2 12 0l2 4-4 2-2-2.2a7 7 0 0 0-4 0L8 13.5l-4-2 2-4Z"/><path d="m15 4 5 5M20 4l-5 5"/>',
     image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m5 18 5-5 3 3 2-2 4 4"/>',
     camera: '<path d="M4 7h3l2-3h6l2 3h3v13H4z"/><circle cx="12" cy="13" r="4"/>',
     video: '<rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/>',
@@ -212,9 +212,9 @@ function contactGroups(l) {
   const emailRows = (l.emails || []).map(p => `<div class="contact-line"><span class="val email-value">${esc(p.n)}</span><div class="qacts"><button title="Email" aria-label="Email ${esc(p.n)}" data-act="email-one" data-n="${esc(p.n)}">${ico("mail",15)}</button></div></div>`).join("");
   const landRows = (l.landlines || []).map(p => `<div class="contact-line"><span class="val">${esc(p.n)}</span>${qactPhone(p.n, l.contact, false, false)}</div>`).join("");
   return `<div class="contact-grid">
-    <div class="contact-group"><div class="contact-group-head"><h4>Mobile</h4></div>${phoneRows}</div>
-    <div class="contact-group"><div class="contact-group-head"><h4>Email</h4><button class="contact-email-all" data-act="email-all" title="Email all" aria-label="Email all">${ico("mail",14)}</button></div>${emailRows}</div>
-    <div class="contact-group contact-landline"><div class="contact-group-head"><h4>Landline</h4></div><div class="landline-grid">${landRows}</div></div>
+    <div class="contact-group contact-mobile"><div class="contact-group-head"><h4>Mobile</h4></div>${phoneRows}</div>
+    <div class="contact-group contact-landline"><div class="contact-group-head"><h4>Landline</h4></div>${landRows}</div>
+    <div class="contact-group contact-email"><div class="contact-group-head"><h4>Email</h4><button class="contact-email-all" data-act="email-all" title="Email all" aria-label="Email all">${ico("mail",14)}</button></div>${emailRows}</div>
   </div>`;
 }
 function companyFieldBlock(k,v,wide=false) {

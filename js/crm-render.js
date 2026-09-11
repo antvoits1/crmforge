@@ -87,11 +87,10 @@ function renderDesk() {
         <div class="rec-main">
           <div class="rec-title-line">
             <span class="rec-avatar" style="background:${avatarColor(l)}" aria-hidden="true">${esc(initials(l.contact))}</span>
-            <h1>${esc(l.company)}</h1>
+            <div class="rec-title-copy"><h1>${esc(l.company)}</h1><div class="rec-who">${esc(displayName(l.contact))}</div></div>
             ${appFile >= 0 ? `<button class="doc-link" data-act="file" data-i="${appFile}" title="Open documents" aria-label="Open documents">${documentIcon()}</button>` : ""}
             <button class="favorite-btn ${state.fav.has(l.id)?"on":""}" data-act="favorite" title="${state.fav.has(l.id)?"Remove star":"Star lead"}" aria-label="${state.fav.has(l.id)?"Remove star":"Star lead"}">${ico("star",16)}</button>
           </div>
-          <div class="rec-who">Owner · ${esc(displayName(l.contact))}</div>
         </div>
         <div class="rec-summary" aria-label="Lead summary">
           <div class="summary-item"><div class="k">Revenue</div><div class="v">${money(l.avg)}</div></div>
@@ -193,7 +192,8 @@ function commIcon(kind, item={}) {
   if (kind === "message") { icon = item.channel === "wa" ? "wa" : "sms"; label = item.channel === "wa" ? "WhatsApp" : "SMS"; }
   if (kind === "email") { icon = "mail"; label = "Email"; }
   if (kind === "call") { icon = item.dir === "in" ? "callIn" : item.dir === "missed" ? "callMissed" : "callOut"; label = callDirection(item); }
-  return `<span class="comm-type-icon ${item.dir === "missed" ? "missed" : ""}" aria-label="${esc(label)}" title="${esc(label)}">${ico(icon,16)}</span>`;
+  const directionClass = kind === "call" ? ` call-${item.dir === "in" ? "in" : item.dir === "missed" ? "missed" : "out"}` : "";
+  return `<span class="comm-type-icon${directionClass}" aria-label="${esc(label)}" title="${esc(label)}">${ico(icon,16)}</span>`;
 }
 function allMessageItems() {
   const items = [];

@@ -1,5 +1,5 @@
 .sidebar {
-  --sidebar-blue:#4C5A78;
+  --sidebar-blue:#18263F;
   --sidebar-fg:#F5F7FB;
   --sidebar-muted:#D5DBE7;
   width:var(--sidebar-width); height:100%; background:var(--sidebar-blue); color:var(--sidebar-fg);
@@ -31,9 +31,9 @@ body[data-sidebar="expanded"] .nav-label { opacity:1; }
 .sidebar-device-zone { padding:6px 10px 4px; }
 .sidebar-device { width:100%; height:40px; border:0; border-radius:8px; background:transparent; color:var(--sidebar-muted); display:flex; align-items:center; gap:11px; padding:0 11px; position:relative; }
 .sidebar-device:hover { background:rgba(255,255,255,.09); color:#fff; }
-.sidebar-device-icon { width:22px; height:22px; flex:0 0 22px; display:grid; place-items:center; position:relative; }
-.sidebar-device-icon svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
-.sidebar-device .status-dot { position:absolute; right:-1px; bottom:-1px; width:7px; height:7px; border-radius:50%; background:#E24B4A; box-shadow:0 0 0 2px var(--sidebar-blue); }
+.sidebar-device-icon { width:26px; height:26px; flex:0 0 26px; display:grid; place-items:center; position:relative; }
+.sidebar-device-icon svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.sidebar-device .status-dot { position:absolute; right:0; bottom:0; width:5px; height:5px; border-radius:50%; background:#E24B4A; box-shadow:0 0 0 2px var(--sidebar-blue); }
 .sidebar-device.connected .status-dot { background:#36C36A; }
 .sidebar-device-copy { min-width:0; font-size:calc(13px * var(--font-factor)); font-weight:500; opacity:0; white-space:nowrap; }
 body[data-sidebar="expanded"] .sidebar-device-copy { opacity:1; }
