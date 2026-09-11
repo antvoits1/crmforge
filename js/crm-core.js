@@ -16,6 +16,7 @@ function saveFavorites() { storeSet(LS.fav, JSON.stringify([...state.fav])); }
 const state = {
   selected: "ns",
   filter: "all",
+  filterOpen: false,
   query: "",
   searchOpen: false,
   commsTab: "all",
@@ -95,6 +96,7 @@ function ico(name, s=16) {
     file: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/>',
     signal: '<path d="M5 16.5h2.5V19H5zM9.5 13h2.5v6H9.5zM14 9.5h2.5V19H14zM18.5 6H21v13h-2.5z"/>',
     search: '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>',
+    filter: '<path d="M4 6h16M7 12h10M10 18h4"/>',
     left: '<path d="m15 18-6-6 6-6"/>',
     right: '<path d="m9 18 6-6-6-6"/>',
     back: '<path d="m15 18-6-6 6-6"/><path d="M9 12h10"/>',
@@ -108,7 +110,9 @@ function toast(msg) {
 }
 function field(k,v){ return `<div class="field"><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`; }
 function companyRow(k,v){ return `<div class="company-row"><span class="k">${esc(k)}</span><span class="v">${v}</span></div>`; }
-function documentIcon(label="DOCS") { return `<span class="doc-paper" aria-hidden="true"><span>${esc(label)}</span></span>`; }
+function documentIcon() {
+  return `<span class="doc-stack" aria-hidden="true"><svg viewBox="0 0 24 26" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5H14l4 4V23H5.5z"/><path d="M14 5.5V10h4"/><path d="M3 3h8.5"/><path d="M3 3v17"/></svg></span>`;
+}
 function bsdValue(l) {
   const years = String(l.tib || "").match(/\d+/)?.[0] || "—";
   const d = new Date(String(l.started || "") + " 1");
@@ -162,14 +166,12 @@ function salesPitch(l) {
   if (revenue && l.tib) sentences.push(`${first}, ${l.company} shows ${revenue} in monthly revenue and ${l.tib} in business.`);
   else if (revenue) sentences.push(`${first}, ${l.company} shows ${revenue} in monthly revenue.`);
   else if (l.tib) sentences.push(`${first}, ${l.company} has ${l.tib} in business.`);
-
   const latest = Array.isArray(l.stmts) && l.stmts.length ? l.stmts[0] : null;
   const approvalText = l.offer != null ? `The file is approved for ${money(l.offer)}${l.ask != null ? ` against a ${money(l.ask)} request` : ""}` : (l.ask != null ? `The current request is ${money(l.ask)}` : "");
   const statementText = latest ? `the latest completed statement shows ${money(latest.dep)} in deposits with a ${money(latest.end)} ending balance` : "";
   if (approvalText && statementText) sentences.push(`${approvalText}, and ${statementText}.`);
   else if (approvalText) sentences.push(approvalText + ".");
   else if (statementText) sentences.push(statementText.charAt(0).toUpperCase() + statementText.slice(1) + ".");
-
   if (l.use) sentences.push(`Keep the funding discussion centered on ${String(l.use).replace(/\.$/, "")} while tying the terms to the numbers already on file.`);
   else sentences.push("Keep the funding discussion tied to the verified revenue and bank activity already on file.");
   return sentences.slice(0,3).join(" ");
@@ -179,11 +181,9 @@ function fmtElapsed(s) {
   return String(m).padStart(2,"0") + ":" + String(r).padStart(2,"0");
 }
 function filtered() {
-  let list = LEADS.slice();
-  if (state.filter === "mine") list = list.filter(l => l.rep === "Cole Brennan");
-  if (state.filter === "star") list = list.filter(l => state.fav.has(l.id));
-  if (state.filter === "today") list = list.filter(l => state.follow[l.id] === "2026-09-05");
-  return list;
+  if (state.filter === "star") return LEADS.filter(l => state.fav.has(l.id));
+  if (state.filter === "hot") return LEADS.filter(l => l.tracked === true);
+  return LEADS.slice();
 }
 function qactPhone(n, who, sms, wa) {
   return `<div class="qacts">
@@ -196,9 +196,14 @@ function contactGroups(l) {
   const phoneRows = (l.mobiles || []).map(p => `<div class="contact-line"><span class="val">${esc(p.n)}</span>${qactPhone(p.n, l.contact, true, true)}</div>`).join("");
   const emailRows = (l.emails || []).map(p => `<div class="contact-line"><span class="val email-value">${esc(p.n)}</span><div class="qacts"><button title="Email" aria-label="Email ${esc(p.n)}" data-act="email-one" data-n="${esc(p.n)}">${ico("mail",15)}</button></div></div>`).join("");
   const landRows = (l.landlines || []).map(p => `<div class="contact-line"><span class="val">${esc(p.n)}</span>${qactPhone(p.n, l.contact, false, false)}</div>`).join("");
-  return `<div class="contact-group"><div class="contact-group-head"><h4>Mobile</h4></div>${phoneRows}</div>
+  return `<div class="contact-grid">
+    <div class="contact-group"><div class="contact-group-head"><h4>Mobile</h4></div>${phoneRows}</div>
     <div class="contact-group"><div class="contact-group-head"><h4>Email</h4><button class="contact-email-all" data-act="email-all" title="Email all" aria-label="Email all">${ico("mail",14)}</button></div>${emailRows}</div>
-    <div class="contact-group"><div class="contact-group-head"><h4>Landline</h4></div>${landRows}</div>`;
+    <div class="contact-group contact-landline"><div class="contact-group-head"><h4>Landline</h4></div><div class="landline-grid">${landRows}</div></div>
+  </div>`;
+}
+function companyFieldBlock(k,v,wide=false) {
+  return `<div class="company-field${wide ? " wide" : ""}"><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`;
 }
 function screenFactor() {
   const value = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--screen-factor"));
@@ -261,4 +266,3 @@ function placePad() {
   pop.innerHTML = `<div class="pad">${[["1",""],["2","ABC"],["3","DEF"],["4","GHI"],["5","JKL"],["6","MNO"],["7","PQRS"],["8","TUV"],["9","WXYZ"],["*",""],["0","+"],["#",""]].map(([n,l]) =>
     `<button data-act="dtmf" data-k="${n}">${n}${l?`<small>${l}</small>`:""}</button>`).join("")}</div>`;
 }
-

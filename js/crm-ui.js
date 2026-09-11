@@ -37,7 +37,6 @@ function renderEmailDetail() {
   if (!m) return `<div class="empty">Email not found.</div>`;
   return `<div class="comm-detail-head simple">${commBackButton("email-back")}<div class="detail-title"><strong>${esc(m.sub||"(no subject)")}</strong><span>${esc(m.when||"")}</span></div></div><div class="email-detail"><div class="email-meta">From ${esc(m.from||"")}<br>To ${esc(m.to||"")}</div><p>${esc(m.preview||"")}</p><button class="btn compact-action" data-act="compose">Reply</button></div>`;
 }
-
 function renderDock() {
   const d = state.dial;
   const unread = 0;
@@ -45,7 +44,6 @@ function renderDock() {
     <div class="dock-head">
       <h2>Communications</h2>
       <span class="live ${["connected","dialing"].includes(d.status)?"show":""}" id="livePill"><i></i> On a call</span>
-      <button class="icon-btn device-status ${device().on?"connected":""}" data-act="devices" title="${esc(device().name)} · ${device().on?"Connected":"Disconnected"}" aria-label="Switch calling device">${ico("signal",16)}<span class="status-dot"></span></button>
     </div>
     <div class="dock-tabs">
       ${[["all","All"],["msg","Messages"],["calls","Call log"],["people","Contacts"],["mail","Email"]].map(([k,lab]) => `<button class="${state.commsTab===k?"on":""}" data-act="comms-tab" data-k="${k}">${lab}${k==="msg" && unread ? ` <span class="unread">${unread}</span>` : ""}</button>`).join("")}
@@ -53,8 +51,8 @@ function renderDock() {
     <div class="dock-body" id="commsBody">${renderComms()}</div>
     ${renderDialer(lead(), d)}`;
   placePad();
+  window.ForgeShell?.setDeviceStatus(Boolean(device().on), device().name);
 }
-
 function renderComms() {
   if (state.commsTab === "msg") {
     if (state.messageThreadOpen) return renderMessageThread();
@@ -78,7 +76,6 @@ function renderComms() {
   const rows=allTimelineItems();
   return `<div class="comm-list">${rows.length ? rows.map(x=>`<button class="comm-row" data-act="timeline-open" data-kind="${x.kind}" data-lead="${x.lead.id}" data-i="${x.index}" ${x.number?`data-n="${esc(x.number)}"`:""} ${x.channel?`data-ch="${esc(x.channel)}"`:""} ${x.folder?`data-folder="${x.folder}"`:""}><span class="comm-avatar" style="background:${avatarColor(x.lead)}">${esc(initials(x.lead.contact))}</span><span class="comm-main"><strong>${esc(x.title)}</strong><small>${esc(x.preview)}</small></span><span class="comm-side"><time>${esc(x.when)}</time><em>${esc(x.typeLabel)}</em></span></button>`).join("") : '<div class="empty">No communications.</div>'}</div>`;
 }
-
 function renderDialer(l, d) {
   const live = ["connected","dialing"].includes(d.status);
   const idle = d.status === "idle" || d.status === "ended";
@@ -101,14 +98,12 @@ function renderDialer(l, d) {
     </div>
   </div>`;
 }
-
 function renderAll() {
   renderRail();
   renderDesk();
   renderDock();
   renderModal();
 }
-
 function openCompose(opts) {
   const l = lead();
   const emails = l.emails.map(e => e.n);
@@ -122,4 +117,3 @@ function openCompose(opts) {
   };
   renderModal();
 }
-

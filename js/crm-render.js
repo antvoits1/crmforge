@@ -4,16 +4,27 @@ function ensureRailShell() {
     <div class="rail-head">
       <h2>Leads <span class="dim" id="leadCount">0</span></h2>
       <div class="rail-head-actions">
-        <button class="btn rail-new" data-act="toast" data-msg="New lead is read-only in this desk.">${ico("plus",14)} New</button>
         <button class="icon-btn rail-search-btn" data-act="search-toggle" title="Search CRM" aria-label="Search CRM">${ico("search",16)}</button>
+        <button class="icon-btn rail-filter-btn" data-act="filter-toggle" title="Filter leads" aria-label="Filter leads" aria-expanded="false">${ico("filter",16)}</button>
       </div>
+      <div class="lead-filter-menu" id="leadFilterMenu" role="menu"></div>
       <div class="crm-search-pop" id="crmSearchPop">
         <label class="crm-search-input">${ico("search",14)}<input id="q" autocomplete="off" aria-label="Search CRM" /></label>
         <div class="crm-search-results" id="crmSearchResults"></div>
       </div>
     </div>
-    <div class="filters" id="leadFilters"></div>
     <div class="lead-list pane" id="leadList"></div>`;
+}
+function renderLeadFilterMenu() {
+  const menu = $("leadFilterMenu");
+  const button = document.querySelector(".rail-filter-btn");
+  if (!menu || !button) return;
+  menu.classList.toggle("open", state.filterOpen);
+  button.classList.toggle("on", state.filter !== "all");
+  button.setAttribute("aria-expanded", String(state.filterOpen));
+  menu.innerHTML = [["all","All"],["star","Starred"],["hot","Hot"]].map(([k,label]) =>
+    `<button class="lead-filter-option ${state.filter===k?"on":""}" data-act="filter" data-k="${k}" role="menuitemradio" aria-checked="${state.filter===k}"><span>${label}</span>${state.filter===k?ico("check",14):""}</button>`
+  ).join("");
 }
 function renderSearch() {
   const pop = $("crmSearchPop");
@@ -29,8 +40,6 @@ function renderRail() {
   ensureRailShell();
   const list = filtered();
   $("leadCount").textContent = list.length;
-  $("leadFilters").innerHTML = [["all","All"],["mine","Mine"],["star","Starred"],["today","Due today"]].map(([k,l]) =>
-    `<button class="chip ${state.filter===k?"on":""}" data-act="filter" data-k="${k}">${l}</button>`).join("");
   const avatarColors = visibleAvatarColors(list);
   $("leadList").innerHTML = list.map((l, index) => `
     <button class="lead-row ${l.id===state.selected?"on":""}" data-act="select" data-id="${l.id}">
@@ -38,6 +47,7 @@ function renderRail() {
       <span><div class="co">${esc(l.company)}</div><div class="nm">${esc(displayName(l.contact))}</div></span>
       <span class="right"><span class="amt">${money(l.avg)}</span><span class="ago">${esc(l.lastAgo)}</span></span>
     </button>`).join("") || `<div class="empty">No leads match.</div>`;
+  renderLeadFilterMenu();
   renderSearch();
 }
 
@@ -47,27 +57,27 @@ function renderDesk() {
   const completedStatements = (Array.isArray(l.stmts) ? l.stmts : []).slice(0, 3);
   const activities = state.activityExpanded ? l.activity : l.activity.slice(0, 2);
   const website = websiteUrl(l.website);
-  const companyRows = [
-    l.dba ? companyRow("DBA", esc(l.dba)) : "",
-    l.industry ? companyRow("Industry", esc(industryWord(l.industry))) : "",
-    l.address ? companyRow("Address", esc(l.address)) : "",
-    l.ein ? companyRow("EIN", esc(l.ein)) : "",
-    l.ssn ? companyRow("SSN", esc(l.ssn)) : "",
-    l.dob ? companyRow("DOB", esc(l.dob)) : "",
-    l.started ? companyRow("BSD", esc(bsdValue(l))) : "",
-    website ? companyRow("Website", `<a href="${esc(website)}" target="_blank" rel="noopener">${esc(l.website)}</a>`) : "",
-    l.entity ? companyRow("Entity", esc(l.entity)) : "",
-    l.employees != null ? companyRow("Employees", esc(l.employees)) : ""
+  const companyFields = [
+    l.dba ? companyFieldBlock("DBA", esc(l.dba)) : "",
+    l.industry ? companyFieldBlock("Industry", esc(industryWord(l.industry))) : "",
+    l.ein ? companyFieldBlock("EIN", esc(l.ein)) : "",
+    l.ssn ? companyFieldBlock("SSN", esc(l.ssn)) : "",
+    l.dob ? companyFieldBlock("DOB", esc(l.dob)) : "",
+    l.started ? companyFieldBlock("BSD", esc(bsdValue(l))) : "",
+    l.entity ? companyFieldBlock("Entity", esc(l.entity)) : "",
+    l.employees != null ? companyFieldBlock("Employees", esc(l.employees)) : "",
+    l.address ? companyFieldBlock("Address", esc(l.address), true) : "",
+    website ? companyFieldBlock("Website", `<a href="${esc(website)}" target="_blank" rel="noopener">${esc(l.website)}</a>`, true) : ""
   ].filter(Boolean).join("");
   const statementRows = completedStatements.map(s => {
     const i = statementFileIndex(l, s.m, false);
     const trigger = i >= 0 ? `data-act="file" data-i="${i}" role="button" tabindex="0"` : "";
-    return `<tr><td><span class="statement-month ${i >= 0 ? "clickable" : ""}" ${trigger}><span>${esc(s.m)}</span>${i >= 0 ? `<button class="statement-doc" data-act="file" data-i="${i}" title="Open ${esc(s.m)}" aria-label="Open ${esc(s.m)}">${documentIcon("DOCS")}</button>` : ""}</span></td><td>${money(s.dep)}</td><td>${money(s.end)}</td></tr>`;
+    return `<tr><td><span class="statement-month ${i >= 0 ? "clickable" : ""}" ${trigger}><span>${esc(s.m)}</span></span></td><td>${money(s.dep)}</td><td>${money(s.end)}</td></tr>`;
   }).join("");
   const mtdRow = l.mtd ? (() => {
     const i = statementFileIndex(l, l.mtd.m, true);
     const trigger = i >= 0 ? `data-act="file" data-i="${i}" role="button" tabindex="0"` : "";
-    return `<tr><td><span class="statement-month ${i >= 0 ? "clickable" : ""}" ${trigger}><span>MTD · ${esc(l.mtd.m)}</span>${i >= 0 ? `<button class="statement-doc" data-act="file" data-i="${i}" title="Open MTD" aria-label="Open MTD">${documentIcon("DOCS")}</button>` : ""}</span></td><td>${money(l.mtd.dep)}</td><td>${money(l.mtd.bal)}</td></tr>`;
+    return `<tr><td><span class="statement-month ${i >= 0 ? "clickable" : ""}" ${trigger}><span>MTD · ${esc(l.mtd.m)}</span></span></td><td>${money(l.mtd.dep)}</td><td>${money(l.mtd.bal)}</td></tr>`;
   })() : "";
   const firstStatement = completedStatements.length ? statementFileIndex(l, completedStatements[0].m, false) : -1;
 
@@ -78,7 +88,7 @@ function renderDesk() {
           <div class="rec-title-line">
             <span class="rec-avatar" style="background:${avatarColor(l)}" aria-hidden="true">${esc(initials(l.contact))}</span>
             <h1>${esc(l.company)}</h1>
-            ${appFile >= 0 ? `<button class="doc-link" data-act="file" data-i="${appFile}" title="Open documents" aria-label="Open documents">${documentIcon("DOCS")}</button>` : ""}
+            ${appFile >= 0 ? `<button class="doc-link" data-act="file" data-i="${appFile}" title="Open documents" aria-label="Open documents">${documentIcon()}</button>` : ""}
           </div>
           <div class="rec-who">Owner · ${esc(displayName(l.contact))}</div>
         </div>
@@ -96,13 +106,13 @@ function renderDesk() {
           </section>
           <section class="paired-section company-card">
             <h3>Company</h3>
-            <div class="company-rows">${companyRows || '<div class="muted">No company details on file.</div>'}</div>
+            <div class="company-fields">${companyFields || '<div class="muted">No company details on file.</div>'}</div>
           </section>
         </div>
 
         <div class="paired-row">
           <section class="paired-section statements-card">
-            <div class="section-heading-inline"><h3>Statements</h3>${firstStatement >= 0 ? `<button class="section-doc" data-act="file" data-i="${firstStatement}" title="Open latest statement" aria-label="Open latest statement">${documentIcon("DOCS")}</button>` : ""}</div>
+            <div class="section-heading-inline"><h3>Statements</h3>${firstStatement >= 0 ? `<button class="section-doc" data-act="file" data-i="${firstStatement}" title="Open latest statement" aria-label="Open latest statement">${documentIcon()}</button>` : ""}</div>
             ${(statementRows || mtdRow) ? `<table class="statement-table"><thead><tr><th>Month</th><th>Deposits</th><th>Ending</th></tr></thead><tbody>${statementRows}${mtdRow}</tbody></table>` : '<div class="muted">No statement data on file.</div>'}
           </section>
           <section class="paired-section">
@@ -123,7 +133,6 @@ function renderDesk() {
       </div>
     </div>`;
 }
-
 
 function relativeMinutes(label) {
   const raw = String(label || "").trim().toLowerCase();

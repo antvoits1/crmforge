@@ -52,11 +52,14 @@
   }
   function navMarkup() {
     const current = body.dataset.page || "leads";
-    return PAGES.map(([page,label,icon], i) => `${page === "notifications" ? '<div class="nav-divider" aria-hidden="true"></div>' : ''}
+    return PAGES.map(([page,label,icon]) => `
       <button class="nav-btn ${current===page?'active':''}" type="button" data-shell-page="${page}" title="${label}">
         <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg></span>
         <span class="nav-label">${label}</span>
       </button>`).join("");
+  }
+  function connectionIcon() {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9.5a11 11 0 0 1 15 0M7.5 12.5a7 7 0 0 1 9 0M10.5 15.5a3 3 0 0 1 3 0"/><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/></svg>';
   }
   function mountShell() {
     const mount = document.getElementById("sidebarMount");
@@ -71,7 +74,8 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M15 6 9 12l6 6"/></svg>
         </button>
       </div>
-      <nav class="sidebar-nav" aria-label="Primary">${navMarkup()}</nav>
+      <nav class="sidebar-nav" aria-label="Primary"><div class="workspace-label">WORKSPACE</div>${navMarkup()}</nav>
+      <div class="sidebar-device-zone"><button class="sidebar-device connected" id="sidebarDevice" type="button" data-shell-act="devices" title="Calling device connected" aria-label="Calling device connected"><span class="sidebar-device-icon">${connectionIcon()}<span class="status-dot"></span></span><span class="sidebar-device-copy">Connection</span></button></div>
       <div class="sidebar-bottom">
         <button class="user-btn" type="button" data-shell-act="account" aria-expanded="false">
           <span class="user-avatar">CB</span>
@@ -132,6 +136,15 @@
     </div>`;
   }
   function closeSettings() { const ov=document.getElementById("shellOverlay"); if (ov) { ov.className="shell-overlay"; ov.innerHTML=""; } }
+  function setDeviceStatus(connected, label="Connection") {
+    const button = document.getElementById("sidebarDevice");
+    if (!button) return;
+    button.classList.toggle("connected", Boolean(connected));
+    const stateLabel = connected ? "connected" : "disconnected";
+    button.title = `${label} · ${stateLabel}`;
+    button.setAttribute("aria-label", `${label} ${stateLabel}`);
+  }
+  window.ForgeShell = { setDeviceStatus };
 
   applySettings({notify:false});
   mountShell();
@@ -151,6 +164,7 @@
       if (act === "account") { toggleAccount(); return; }
       if (act === "settings") { openSettings(); return; }
       if (act === "settings-close") { closeSettings(); return; }
+      if (act === "devices") { window.dispatchEvent(new CustomEvent("forge:devices")); return; }
       if (act === "logout") { closeAccount(); showToast("Log Out is unavailable because no authentication service is connected to this build."); return; }
       if (act === "reset-panels") { window.dispatchEvent(new CustomEvent("forge:reset-panels")); showToast("Panel widths reset."); return; }
     }

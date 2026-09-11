@@ -23,12 +23,12 @@
   --dial-h: 70px;
   --rail-w: 460px;
   --dock-w: 420px;
-  --sidebar-width: 62px;
-  --sidebar-expanded-width: 214px;
+  --sidebar-width: 64px;
+  --sidebar-expanded-width: 216px;
   --content-pad-x: 40px;
   --section-gap-x: 64px;
   --bubble-max: 260px;
-  --lead-row-y: 8px;
+  --lead-row-y: 7px;
   --panel-head-h: 48px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -44,7 +44,7 @@ html[data-screen-scale="ultra"] {
   --section-gap-x: 84px;
   --bubble-max: 380px;
 }
-html[data-lead-density="compact"] { --lead-row-y: 6px; }
+html[data-lead-density="compact"] { --lead-row-y: 5px; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
 html { -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
