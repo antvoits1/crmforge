@@ -86,3 +86,36 @@ html[data-motion="reduced"] *::after { animation-duration: .01ms !important; tra
     animation-duration: .01ms !important; transition-duration: .01ms !important;
   }
 }
+@media (max-width: 1279px), (pointer: coarse) {
+  html, body {
+    width: auto;
+    min-width: 100%;
+    min-height: 100%;
+    overflow: auto;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  body {
+    height: auto;
+    min-height: 100dvh;
+    touch-action: pan-x pan-y;
+  }
+  .app {
+    width: max-content;
+    min-width: 1280px;
+    height: max(100dvh, 100%);
+    min-height: 100dvh;
+    overflow: visible;
+  }
+  .workspace {
+    width: calc(1280px - var(--sidebar-width));
+    min-width: calc(1280px - var(--sidebar-width));
+    height: 100dvh;
+    overflow: visible;
+  }
+  .crm-page {
+    min-width: calc(1280px - var(--sidebar-width));
+    height: 100dvh;
+    overflow: visible;
+  }
+}
