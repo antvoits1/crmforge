@@ -67,7 +67,7 @@ svg { display: block; }
 .num { font-variant-numeric: normal; font-family: var(--font); font-weight: 500; }
 .app {
   height: 100%;
-  min-width: 1280px;
+  min-width: 1200px;
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
   overflow: hidden;
@@ -86,7 +86,7 @@ html[data-motion="reduced"] *::after { animation-duration: .01ms !important; tra
     animation-duration: .01ms !important; transition-duration: .01ms !important;
   }
 }
-@media (max-width: 1279px), (pointer: coarse) {
+@media (max-width: 1200px), (pointer: coarse) {
   html, body {
     width:100%;
     height:100%;
@@ -98,44 +98,35 @@ html[data-motion="reduced"] *::after { animation-duration: .01ms !important; tra
   .app {
     position:fixed;
     inset:0;
-    width:100vw;
-    min-width:0;
+    width:1200px;
+    min-width:1200px;
     height:100dvh;
     display:block;
-    overflow:auto;
+    overflow:hidden;
     -webkit-overflow-scrolling:touch;
-    overscroll-behavior:auto;
-    touch-action:pan-x pan-y;
-  }
-  .app::after {
-    content:"";
-    position:absolute;
-    left:0;
-    top:0;
-    width:1280px;
-    height:max(100dvh, 900px);
-    pointer-events:none;
+    overscroll-behavior:none;
+    touch-action:pan-x pan-y pinch-zoom;
   }
   #sidebarMount {
     position:absolute;
     left:0;
     top:0;
     width:var(--sidebar-width);
-    height:max(100dvh, 900px);
+    height:100%;
   }
   .workspace {
     position:absolute;
     left:var(--sidebar-width);
     top:0;
-    width:calc(1280px - var(--sidebar-width));
-    min-width:calc(1280px - var(--sidebar-width));
-    height:max(100dvh, 900px);
-    overflow:visible;
+    width:calc(1200px - var(--sidebar-width));
+    min-width:calc(1200px - var(--sidebar-width));
+    height:100%;
+    overflow:hidden;
   }
   .crm-page {
-    width:calc(1280px - var(--sidebar-width));
-    min-width:calc(1280px - var(--sidebar-width));
-    height:max(100dvh, 900px);
-    overflow:visible;
+    width:calc(1200px - var(--sidebar-width));
+    min-width:calc(1200px - var(--sidebar-width));
+    height:100%;
+    overflow:hidden;
   }
 }

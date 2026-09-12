@@ -44,7 +44,7 @@ function renderRail() {
   $("leadList").innerHTML = list.map((l, index) => `
     <button class="lead-row ${l.id===state.selected?"on":""}" data-act="select" data-id="${l.id}">
       <span class="av" style="background:${avatarColors[index]}">${esc(initials(l.contact))}</span>
-      <span><div class="co">${esc(l.company)}</div><div class="nm">${esc(displayName(l.contact))}</div></span>
+      <span class="lead-copy"><div class="co">${esc(l.company)}</div><div class="nm">${esc(displayName(l.contact))}</div></span>
       <span class="right"><span class="amt">${money(l.avg)}</span><span class="ago">${esc(l.lastAgo)}</span></span>
     </button>`).join("") || `<div class="empty">No leads match.</div>`;
   renderLeadFilterMenu();
@@ -53,7 +53,6 @@ function renderRail() {
 
 function renderDesk() {
   const l = lead();
-  const appFile = applicationFileIndex(l);
   const completedStatements = (Array.isArray(l.stmts) ? l.stmts : []).slice(0, 3);
   const activities = state.activityExpanded ? l.activity : l.activity.slice(0, 2);
   const website = websiteUrl(l.website);
@@ -77,7 +76,8 @@ function renderDesk() {
   const mtdRow = l.mtd ? (() => {
     const i = statementFileIndex(l, l.mtd.m, true);
     const trigger = i >= 0 ? `data-act="file" data-i="${i}" role="button" tabindex="0"` : "";
-    return `<tr><td><span class="statement-month ${i >= 0 ? "clickable" : ""}" ${trigger}><span>MTD · ${esc(l.mtd.m)}</span></span></td><td>${money(l.mtd.dep)}</td><td>${money(l.mtd.bal)}</td></tr>`;
+    const shortMonth = String(l.mtd.m || "").slice(0, 3);
+    return `<tr><td><span class="statement-month ${i >= 0 ? "clickable" : ""}" ${trigger}><span>${esc(shortMonth)} • MTD</span></span></td><td>${money(l.mtd.dep)}</td><td>${money(l.mtd.bal)}</td></tr>`;
   })() : "";
   const firstStatement = completedStatements.length ? statementFileIndex(l, completedStatements[0].m, false) : -1;
 
@@ -87,14 +87,8 @@ function renderDesk() {
         <div class="rec-main">
           <div class="rec-title-line">
             <span class="rec-avatar" style="background:${avatarColor(l)}" aria-hidden="true">${esc(initials(l.contact))}</span>
-            <div class="rec-title-copy"><h1>${esc(l.company)}</h1><div class="rec-who">${esc(displayName(l.contact))}</div></div>
-            ${appFile >= 0 ? `<button class="doc-link" data-act="file" data-i="${appFile}" title="Open documents" aria-label="Open documents">${documentIcon()}</button>` : ""}
-            <button class="favorite-btn ${state.fav.has(l.id)?"on":""}" data-act="favorite" title="${state.fav.has(l.id)?"Remove star":"Star lead"}" aria-label="${state.fav.has(l.id)?"Remove star":"Star lead"}">${ico("star",16)}</button>
+            <div class="rec-title-copy"><div class="rec-eyebrow"><span>Lead record</span></div><div class="rec-company-line"><h1>${esc(l.company)}</h1><div class="rec-summary" aria-label="Lead approval"><div class="summary-item summary-accent"><div class="k">Approval</div><div class="v">${money(l.offer)}</div></div></div></div><div class="rec-who">${esc(displayName(l.contact))}</div></div>
           </div>
-        </div>
-        <div class="rec-summary" aria-label="Lead summary">
-          <div class="summary-item"><div class="k">Revenue</div><div class="v">${money(l.avg)}</div></div>
-          <div class="summary-item"><div class="k">Approval</div><div class="v">${money(l.offer)}</div></div>
         </div>
       </div>
 
