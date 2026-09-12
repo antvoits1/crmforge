@@ -7,8 +7,8 @@
     ["command", "Command", '<path d="M12 3 4 7.5 12 12l8-4.5L12 3z"></path><path d="m4 12 8 4.5 8-4.5M4 16.5 12 21l8-4.5"></path>'],
     ["notifications", "Notifications", '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>']
   ];
-  const KEY = "forge.v2.settings";
-  const DEFAULTS = { screenScale:"auto", fontSize:"auto", navMode:"topbar", leadDensity:"standard", motion:"normal" };
+  const KEY = "forge.v3.settings";
+  const DEFAULTS = { screenScale:"auto", fontSize:"auto", navMode:"sidebar-icons", leadDensity:"standard", motion:"normal" };
   let accountOpen = false;
   let toastTimer = null;
   const body = document.body;
@@ -42,7 +42,7 @@
     html.dataset.motion = settings.motion === "reduced" ? "reduced" : "normal";
     html.style.setProperty("--ui-font-size", size + "px");
     html.style.setProperty("--font-factor", String(size / 16));
-    const navMode = ["topbar","sidebar-icons","sidebar-wide"].includes(settings.navMode) ? settings.navMode : "topbar";
+    const navMode = ["topbar","sidebar-icons","sidebar-wide"].includes(settings.navMode) ? settings.navMode : "sidebar-icons";
     html.dataset.navMode = navMode;
     body.dataset.sidebar = navMode === "sidebar-wide" ? "expanded" : "collapsed";
     saveSettings();
@@ -112,8 +112,8 @@
     closeAccount();
   }
   function cycleNavigation() {
-    const current = html.dataset.navMode || "topbar";
-    settings.navMode = current === "topbar" ? "sidebar-icons" : current === "sidebar-icons" ? "sidebar-wide" : "topbar";
+    const current = html.dataset.navMode || "sidebar-icons";
+    settings.navMode = current === "sidebar-icons" ? "sidebar-wide" : current === "sidebar-wide" ? "topbar" : "sidebar-icons";
     applySettings();
   }
   function closeAccount() {
@@ -143,7 +143,7 @@
       <div class="settings-head"><h2 id="settingsTitle">Settings</h2><button class="shell-close" type="button" data-shell-act="settings-close" aria-label="Close">×</button></div>
       <div class="setting-row"><div class="setting-copy"><strong>Screen Scale</strong><span>Auto picks a layout for the current screen. You can override it anytime.</span></div><select data-setting="screenScale">${settingOptions([["auto","Auto (Recommended)"],["standard","Standard"],["wide","Wide"],["ultra","Ultra-Wide"]], settings.screenScale)}</select></div>
       <div class="setting-row"><div class="setting-copy"><strong>Font / Icon Size</strong><span>Auto keeps 16px standard and gently increases ultra-wide screens. Manual sizes stay 15px–19px.</span></div><select data-setting="fontSize">${settingOptions(fontValues, settings.fontSize)}</select></div>
-      <div class="setting-row"><div class="setting-copy"><strong>Navigation</strong><span>Top bar is the default. Switch to compact or wide sidebar when needed.</span></div><select data-setting="navMode">${settingOptions([["topbar","Top bar (Default)"],["sidebar-icons","Sidebar icons"],["sidebar-wide","Wide sidebar"]], settings.navMode)}</select></div>
+      <div class="setting-row"><div class="setting-copy"><strong>Navigation</strong><span>Blue icon sidebar is the default. Switch to wide sidebar or top bar when needed.</span></div><select data-setting="navMode">${settingOptions([["sidebar-icons","Blue sidebar (Default)"],["sidebar-wide","Wide blue sidebar"],["topbar","Top bar"]], settings.navMode)}</select></div>
       <div class="setting-row"><div class="setting-copy"><strong>Lead Row Spacing</strong><span>Compact shows more leads without changing lead data.</span></div><select data-setting="leadDensity">${settingOptions([["standard","Standard"],["compact","Compact"]], settings.leadDensity)}</select></div>
       <div class="setting-row"><div class="setting-copy"><strong>Motion</strong><span>Reduced motion removes non-essential animations and transitions.</span></div><select data-setting="motion">${settingOptions([["normal","Normal"],["reduced","Reduced"]], settings.motion)}</select></div>
       ${document.getElementById("main") ? '<div class="settings-actions"><button class="shell-btn" type="button" data-shell-act="reset-panels">Reset panel widths</button></div>' : ''}
