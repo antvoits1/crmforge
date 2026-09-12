@@ -126,7 +126,7 @@ function toast(msg) {
 }
 function companyRow(k,v){ return `<div class="company-row"><span class="k">${esc(k)}</span><span class="v">${v}</span></div>`; }
 function documentIcon() {
-  return `<span class="doc-stack pdf-mark" aria-hidden="true"><svg viewBox="0 0 24 26" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 2.5H14l4 4V23H5.5z" fill="currentColor" stroke="currentColor"/><path d="M14 2.5V7h4" fill="#fff" stroke="#fff"/><path d="M8 13.5h8M8 17h7" stroke="#fff" stroke-width="1.5"/><text x="8" y="11" fill="#fff" stroke="none" font-size="4.2" font-family="Arial,sans-serif" font-weight="700">PDF</text></svg></span>`;
+  return `<span class="doc-stack" aria-hidden="true"><svg viewBox="0 0 24 26" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 5.5H14l4 4V23H5.5z"/><path d="M14 5.5V10h4"/><path d="M3 3h8.5"/><path d="M3 3v17"/></svg></span>`;
 }
 function bsdValue(l) {
   const years = String(l.tib || "").match(/\d+/)?.[0] || "—";
