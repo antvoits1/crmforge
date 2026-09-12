@@ -79,23 +79,22 @@
         </div>
       </header>
       <aside class="sidebar-shell">
-        <div class="sidebar-head">
-          <button class="sidebar-collapsed-toggle" type="button" data-shell-act="nav-cycle" aria-label="Expand sidebar" title="Expand sidebar"></button>
-          <div class="forge-dots" aria-label="Forge"><i class="r"></i><i class="y"></i><i class="g"></i></div>
-          <div class="sidebar-brand">Forge<span>CRM</span></div>
-          <button class="sidebar-toggle" type="button" data-shell-act="nav-cycle" aria-label="Switch to top bar" title="Switch to top bar">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M15 6 9 12l6 6"/></svg>
-          </button>
-        </div>
-        <nav class="sidebar-nav" aria-label="Primary"><div class="workspace-label">WORKSPACE</div>${navMarkup()}</nav>
-        <div class="sidebar-device-zone"><button class="sidebar-device connected" id="sidebarDevice" type="button" data-shell-act="devices" title="Calling device connected" aria-label="Calling device connected"><span class="sidebar-device-icon">${connectionIcon()}<span class="status-dot"></span></span><span class="sidebar-device-copy">Connection</span></button></div>
-        <div class="sidebar-bottom">
-          <button class="user-btn" type="button" data-shell-act="account" aria-expanded="false">
-            <span class="user-avatar">CB</span>
-            <span class="user-copy"><strong>Cole Brennan</strong><span>User</span></span>
-          </button>
-        </div>
-      </aside>`;
+      <div class="sidebar-head">
+        <button class="sidebar-collapsed-toggle" type="button" data-shell-act="nav-cycle" aria-label="Expand sidebar" title="Expand sidebar"></button>
+        <div class="forge-dots" aria-label="Forge"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <div class="sidebar-brand">Forge<span>CRM</span></div>
+        <button class="sidebar-toggle" type="button" data-shell-act="nav-cycle" aria-label="Switch to top bar" title="Switch to top bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M15 6 9 12l6 6"/></svg>
+        </button>
+      </div>
+      <nav class="sidebar-nav" aria-label="Primary"><div class="workspace-label">WORKSPACE</div>${navMarkup()}</nav>
+      <div class="sidebar-device-zone"><button class="sidebar-device connected" id="sidebarDevice" type="button" data-shell-act="devices" title="Calling device connected" aria-label="Calling device connected"><span class="sidebar-device-icon">${connectionIcon()}<span class="status-dot"></span></span><span class="sidebar-device-copy">Connection</span></button></div>
+      <div class="sidebar-bottom">
+        <button class="user-btn" type="button" data-shell-act="account" aria-expanded="false">
+          <span class="user-avatar">CB</span>
+          <span class="user-copy"><strong>Cole Brennan</strong><span>User</span></span>
+        </button>
+      </div></aside>`;
     const menu = document.createElement("div");
     menu.className = "account-menu"; menu.id = "accountMenu";
     menu.innerHTML = `<button type="button" data-shell-act="settings">Settings</button><button type="button" data-shell-act="logout">Log Out</button>`;
@@ -144,7 +143,7 @@
       <div class="settings-head"><h2 id="settingsTitle">Settings</h2><button class="shell-close" type="button" data-shell-act="settings-close" aria-label="Close">×</button></div>
       <div class="setting-row"><div class="setting-copy"><strong>Screen Scale</strong><span>Auto picks a layout for the current screen. You can override it anytime.</span></div><select data-setting="screenScale">${settingOptions([["auto","Auto (Recommended)"],["standard","Standard"],["wide","Wide"],["ultra","Ultra-Wide"]], settings.screenScale)}</select></div>
       <div class="setting-row"><div class="setting-copy"><strong>Font / Icon Size</strong><span>Auto keeps 16px standard and gently increases ultra-wide screens. Manual sizes stay 15px–19px.</span></div><select data-setting="fontSize">${settingOptions(fontValues, settings.fontSize)}</select></div>
-      <div class="setting-row"><div class="setting-copy"><strong>Navigation</strong><span>Top bar is the default. You can switch to icon or wide sidebar.</span></div><select data-setting="navMode">${settingOptions([["topbar","Top bar (Default)"],["sidebar-icons","Sidebar icons"],["sidebar-wide","Wide sidebar"]], settings.navMode)}</select></div>
+      <div class="setting-row"><div class="setting-copy"><strong>Navigation</strong><span>Top bar is the default. Switch to compact or wide sidebar when needed.</span></div><select data-setting="navMode">${settingOptions([["topbar","Top bar (Default)"],["sidebar-icons","Sidebar icons"],["sidebar-wide","Wide sidebar"]], settings.navMode)}</select></div>
       <div class="setting-row"><div class="setting-copy"><strong>Lead Row Spacing</strong><span>Compact shows more leads without changing lead data.</span></div><select data-setting="leadDensity">${settingOptions([["standard","Standard"],["compact","Compact"]], settings.leadDensity)}</select></div>
       <div class="setting-row"><div class="setting-copy"><strong>Motion</strong><span>Reduced motion removes non-essential animations and transitions.</span></div><select data-setting="motion">${settingOptions([["normal","Normal"],["reduced","Reduced"]], settings.motion)}</select></div>
       ${document.getElementById("main") ? '<div class="settings-actions"><button class="shell-btn" type="button" data-shell-act="reset-panels">Reset panel widths</button></div>' : ''}
@@ -153,14 +152,11 @@
   function closeSettings() { const ov=document.getElementById("shellOverlay"); if (ov) { ov.className="shell-overlay"; ov.innerHTML=""; } }
   function setDeviceStatus(connected, label="Connection") {
     const button = document.getElementById("sidebarDevice");
-    if (button) {
-      button.classList.toggle("connected", Boolean(connected));
-      const stateLabel = connected ? "connected" : "disconnected";
-      button.title = `${label} · ${stateLabel}`;
-      button.setAttribute("aria-label", `${label} ${stateLabel}`);
-    }
-    const dot = document.querySelector(".topbar-device-dot");
-    if (dot) dot.classList.toggle("disconnected", !connected);
+    if (!button) return;
+    button.classList.toggle("connected", Boolean(connected));
+    const stateLabel = connected ? "connected" : "disconnected";
+    button.title = `${label} · ${stateLabel}`;
+    button.setAttribute("aria-label", `${label} ${stateLabel}`);
   }
   window.ForgeShell = { setDeviceStatus };
 

@@ -3,7 +3,7 @@
   --sidebar-fg:#F5F7FB;
   --sidebar-muted:#D5DBE7;
   width:var(--sidebar-width); height:100%; background:var(--sidebar-blue); color:var(--sidebar-fg);
-  border-right:1px solid rgba(31,39,57,.22); display:none; flex-direction:column; overflow:hidden; position:relative; z-index:30;
+  border-right:1px solid rgba(31,39,57,.22); display:flex; flex-direction:column; overflow:hidden; position:relative; z-index:30;
   transition:width 180ms var(--ease);
 }
 .sidebar-head { height:var(--panel-head-h); flex:0 0 var(--panel-head-h); display:flex; align-items:center; padding:0 14px; gap:11px; border-bottom:1px solid rgba(255,255,255,.14); }
@@ -69,7 +69,7 @@ body[data-sidebar="expanded"] .user-copy { opacity:1; }
 
 :root { --topbar-h:48px; }
 
-/* Top navigation */
+/* Top navigation. The existing blue sidebar visual remains unchanged. */
 .topbar-shell { display:none; height:var(--topbar-h); min-height:var(--topbar-h); align-items:center; gap:10px; padding:0 16px; background:#F4F5F7; border-bottom:1px solid var(--line); color:var(--fg); }
 .topbar-traffic { display:flex; gap:7px; align-items:center; padding:0 4px 0 0; border:0; background:transparent; }
 .topbar-traffic i { width:10px; height:10px; border-radius:50%; display:block; box-shadow:0 0 0 .5px rgba(0,0,0,.25),inset 0 1px 1px rgba(255,255,255,.55),inset 0 -1px 1px rgba(0,0,0,.18); }
@@ -92,7 +92,7 @@ body[data-sidebar="expanded"] .user-copy { opacity:1; }
 .topbar-device-dot.disconnected { background:#E24B4A; }
 .topbar-avatar { border-radius:50%; background:#3D4F61; color:#fff; font-size:10px; font-weight:650; }
 
-/* Navigation modes */
+.sidebar-shell { display:none; flex-direction:column; background:var(--sidebar-blue,#18263F); color:var(--sidebar-fg,#F5F7FB); overflow:hidden; }
 .sidebar-shell .sidebar-nav { flex:1; }
 html[data-nav-mode="topbar"] body { overflow:hidden; }
 html[data-nav-mode="topbar"] .app { grid-template-columns:1fr; grid-template-rows:var(--topbar-h) minmax(0,1fr); min-width:1200px; }
