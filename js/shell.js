@@ -8,7 +8,7 @@
     ["notifications", "Notifications", '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>']
   ];
   const KEY = "forge.v2.settings";
-  const DEFAULTS = { screenScale:"auto", fontSize:"auto", sidebar:"collapsed", leadDensity:"standard", motion:"normal" };
+  const DEFAULTS = { screenScale:"auto", fontSize:"auto", navMode:"topbar", leadDensity:"standard", motion:"normal" };
   let accountOpen = false;
   let toastTimer = null;
   const body = document.body;
@@ -42,7 +42,9 @@
     html.dataset.motion = settings.motion === "reduced" ? "reduced" : "normal";
     html.style.setProperty("--ui-font-size", size + "px");
     html.style.setProperty("--font-factor", String(size / 16));
-    body.dataset.sidebar = settings.sidebar === "expanded" ? "expanded" : "collapsed";
+    const navMode = ["topbar","sidebar-icons","sidebar-wide"].includes(settings.navMode) ? settings.navMode : "topbar";
+    html.dataset.navMode = navMode;
+    body.dataset.sidebar = navMode === "sidebar-wide" ? "expanded" : "collapsed";
     saveSettings();
     if (notify) window.dispatchEvent(new CustomEvent("forge:layout-changed"));
   }
@@ -50,9 +52,9 @@
     if (page === "leads") return base === ".." ? "../index.html" : "index.html";
     return base === ".." ? `${page}.html` : `pages/${page}.html`;
   }
-  function navMarkup() {
+  function navMarkup(includeNotifications = true) {
     const current = body.dataset.page || "leads";
-    return PAGES.map(([page,label,icon]) => `
+    return PAGES.filter(([page]) => includeNotifications || page !== "notifications").map(([page,label,icon]) => `
       <button class="nav-btn ${current===page?'active':''}" type="button" data-shell-page="${page}" title="${label}">
         <span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg></span>
         <span class="nav-label">${label}</span>
@@ -64,13 +66,24 @@
   function mountShell() {
     const mount = document.getElementById("sidebarMount");
     if (!mount) return;
-    mount.className = "sidebar";
+    mount.className = "app-nav";
     mount.innerHTML = `
+      <header class="topbar-shell">
+        <button class="topbar-traffic" type="button" data-shell-act="nav-cycle" aria-label="Change navigation" title="Change navigation"><i class="r"></i><i class="y"></i><i class="g"></i></button>
+        <div class="topbar-brand">Forge<span>CRM</span></div>
+        <nav class="topbar-nav" aria-label="Primary">${navMarkup(false)}</nav>
+        <div class="topbar-utilities" aria-label="Workspace utilities">
+          <button class="topbar-device" type="button" data-shell-act="devices" aria-label="Calling device"><span class="topbar-device-dot"></span>${connectionIcon()}</button>
+          <button class="topbar-notifications ${body.dataset.page === "notifications" ? "active" : ""}" type="button" data-shell-page="notifications" aria-label="Notifications" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+          <button class="topbar-avatar" type="button" data-shell-act="account" aria-expanded="false">CB</button>
+        </div>
+      </header>
+      <aside class="sidebar-shell">
       <div class="sidebar-head">
-        <button class="sidebar-collapsed-toggle" type="button" data-shell-act="sidebar-toggle" aria-label="Expand sidebar" title="Expand sidebar"></button>
+        <button class="sidebar-collapsed-toggle" type="button" data-shell-act="nav-cycle" aria-label="Expand sidebar" title="Expand sidebar"></button>
         <div class="forge-dots" aria-label="Forge"><i class="r"></i><i class="y"></i><i class="g"></i></div>
         <div class="sidebar-brand">Forge<span>CRM</span></div>
-        <button class="sidebar-toggle" type="button" data-shell-act="sidebar-toggle" aria-label="Collapse sidebar" title="Collapse sidebar">
+        <button class="sidebar-toggle" type="button" data-shell-act="nav-cycle" aria-label="Switch to top bar" title="Switch to top bar">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M15 6 9 12l6 6"/></svg>
         </button>
       </div>
@@ -81,7 +94,7 @@
           <span class="user-avatar">CB</span>
           <span class="user-copy"><strong>Cole Brennan</strong><span>User</span></span>
         </button>
-      </div>`;
+      </div></aside>`;
     const menu = document.createElement("div");
     menu.className = "account-menu"; menu.id = "accountMenu";
     menu.innerHTML = `<button type="button" data-shell-act="settings">Settings</button><button type="button" data-shell-act="logout">Log Out</button>`;
@@ -98,19 +111,20 @@
     document.title = `${PAGES.find(([p]) => p===valid)?.[1] || "Forge"} · Forge CRM`;
     closeAccount();
   }
-  function toggleSidebar() {
-    settings.sidebar = body.dataset.sidebar === "expanded" ? "collapsed" : "expanded";
+  function cycleNavigation() {
+    const current = html.dataset.navMode || "topbar";
+    settings.navMode = current === "topbar" ? "sidebar-icons" : current === "sidebar-icons" ? "sidebar-wide" : "topbar";
     applySettings();
   }
   function closeAccount() {
     accountOpen = false;
     document.getElementById("accountMenu")?.classList.remove("open");
-    document.querySelector("[data-shell-act='account']")?.setAttribute("aria-expanded", "false");
+    document.querySelectorAll("[data-shell-act='account']").forEach(el => el.setAttribute("aria-expanded", "false"));
   }
   function toggleAccount() {
     accountOpen = !accountOpen;
     document.getElementById("accountMenu")?.classList.toggle("open", accountOpen);
-    document.querySelector("[data-shell-act='account']")?.setAttribute("aria-expanded", String(accountOpen));
+    document.querySelectorAll("[data-shell-act='account']").forEach(el => el.setAttribute("aria-expanded", String(accountOpen)));
   }
   function showToast(message) {
     const el = document.getElementById("shellToast"); if (!el) return;
@@ -129,7 +143,7 @@
       <div class="settings-head"><h2 id="settingsTitle">Settings</h2><button class="shell-close" type="button" data-shell-act="settings-close" aria-label="Close">×</button></div>
       <div class="setting-row"><div class="setting-copy"><strong>Screen Scale</strong><span>Auto picks a layout for the current screen. You can override it anytime.</span></div><select data-setting="screenScale">${settingOptions([["auto","Auto (Recommended)"],["standard","Standard"],["wide","Wide"],["ultra","Ultra-Wide"]], settings.screenScale)}</select></div>
       <div class="setting-row"><div class="setting-copy"><strong>Font / Icon Size</strong><span>Auto keeps 16px standard and gently increases ultra-wide screens. Manual sizes stay 15px–19px.</span></div><select data-setting="fontSize">${settingOptions(fontValues, settings.fontSize)}</select></div>
-      <div class="setting-row"><div class="setting-copy"><strong>Sidebar</strong><span>Choose whether the page starts with icons only or the wider text sidebar.</span></div><select data-setting="sidebar">${settingOptions([["collapsed","Icons only"],["expanded","Expanded with text"]], settings.sidebar)}</select></div>
+      <div class="setting-row"><div class="setting-copy"><strong>Navigation</strong><span>Top bar is the default. Switch to compact or wide sidebar when needed.</span></div><select data-setting="navMode">${settingOptions([["topbar","Top bar (Default)"],["sidebar-icons","Sidebar icons"],["sidebar-wide","Wide sidebar"]], settings.navMode)}</select></div>
       <div class="setting-row"><div class="setting-copy"><strong>Lead Row Spacing</strong><span>Compact shows more leads without changing lead data.</span></div><select data-setting="leadDensity">${settingOptions([["standard","Standard"],["compact","Compact"]], settings.leadDensity)}</select></div>
       <div class="setting-row"><div class="setting-copy"><strong>Motion</strong><span>Reduced motion removes non-essential animations and transitions.</span></div><select data-setting="motion">${settingOptions([["normal","Normal"],["reduced","Reduced"]], settings.motion)}</select></div>
       ${document.getElementById("main") ? '<div class="settings-actions"><button class="shell-btn" type="button" data-shell-act="reset-panels">Reset panel widths</button></div>' : ''}
@@ -160,7 +174,7 @@
     const actBtn = e.target.closest("[data-shell-act]");
     if (actBtn) {
       const act = actBtn.dataset.shellAct;
-      if (act === "sidebar-toggle") { toggleSidebar(); return; }
+      if (act === "nav-cycle") { cycleNavigation(); return; }
       if (act === "account") { toggleAccount(); return; }
       if (act === "settings") { openSettings(); return; }
       if (act === "settings-close") { closeSettings(); return; }

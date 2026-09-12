@@ -1,0 +1,172 @@
+/* Forge CRM final visual theme. This is the single authoritative visual refinement layer. */
+
+.main { grid-template-columns:var(--rail-w) 1px minmax(0,1fr) 1px var(--dock-w); gap:0; background:#EEF1F4; }
+.handle { width:1px; background:#E2E6EA; }
+.handle::after { display:none; }
+.rail,.dock,.desk { background:#fff; }
+.rail-head h2 { font-size:15px; letter-spacing:-.01em; }
+.rail-head h2::after { content:"Active pipeline"; display:block; margin-top:2px; font-size:10.5px; color:#9AA3AD; letter-spacing:.04em; font-weight:500; }
+.rail-head h2 .dim { color:#66717D; font-size:12px; margin-left:3px; }
+.rail-head-actions { gap:6px; }
+
+.lead-list { padding:8px 8px 18px; background:#FBFCFD; }
+.lead-row:hover { background:#F3F5F7; }
+.lead-copy { min-width:0; }
+.lead-row .ago { margin-top:0; font-size:10.5px; color:#9AA3AD; }
+
+.desk-scroll { background:#fff; }
+.rec-title-line { gap:11px; }
+.rec-title-copy { gap:0; }
+.rec-eyebrow { display:flex; align-items:center; gap:7px; margin-bottom:4px; color:#9AA3AD; font-size:10px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; }
+.rec-title-line h1 { font-size:18px; letter-spacing:-.04em; }
+.rec-who { margin-top:2px; font-size:12.5px; color:#75808B; }
+.rec-head { display:block; }
+.rec-main,.rec-title-line,.rec-title-copy,.rec-company-line { width:100%; }
+.rec-title-copy { flex:1; min-width:0; padding-bottom:10px; border-bottom:1px solid var(--line); }
+.rec-company-line { display:flex; align-items:center; justify-content:space-between; gap:18px; min-width:0; }
+.rec-company-line h1 { min-width:0; }
+.rec-summary { flex:0 0 92px; min-width:92px; width:92px; display:block; margin-left:auto; }
+.summary-item .k { text-align:center; color:#8A949E; font-size:9px; text-transform:uppercase; letter-spacing:.07em; }
+.summary-item .v { text-align:center; margin-top:2px; font-size:15px; }
+.summary-accent .v { color:#176E64; }
+
+.middle-body { padding:20px 28px 44px; max-width:1100px; }
+.paired-row { gap:14px; margin-bottom:14px; }
+.paired-primary { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+.paired-section>h3,.section-heading-inline h3,.section-title h3 { margin-bottom:14px; color:#89949F; font-size:10px; letter-spacing:.12em; }
+.contact-grid { gap:12px 18px; }
+.contact-line { min-height:32px; padding:5px 0; border-bottom-color:var(--line); }
+.contact-line .val { font-size:13.5px; }
+.company-fields { gap:12px 20px; }
+.company-field { border-bottom:1px solid var(--line); padding:6px 0; }
+.company-field .k { color:#8A949E; font-size:12px; }
+.company-field .v { margin-top:3px; font-size:13.5px; }
+.company-row { min-height:32px; padding:5px 0; border-bottom:1px solid var(--line); }
+.company-row .k { font-size:12.5px; color:#8A949E; }
+.company-row .v { font-size:13.5px; }
+.statement-table th,.statement-table td { padding:8px 0; font-size:13.5px; }
+.statement-table th { font-size:11px; color:#89949F; }
+
+.section-doc { width:24px; height:24px; border-radius:0; background:transparent; color:#C83F46; }
+.section-doc:hover { background:transparent; color:#9F2933; transform:translateY(-1px) scale(1.05); }
+.section-doc .doc-stack { width:18px; height:20px; }
+.pdf-mark svg { display:block; width:100%; height:100%; }
+.section-block { padding:20px 0; }
+.section-title { margin-bottom:11px; }
+.sales-pitch { max-width:860px; font-size:14px; line-height:1.65; color:#3A444E; }
+.activity-row { grid-template-columns:115px minmax(0,1fr); gap:18px; padding:11px 0; font-size:13.5px; }
+.activity-row .when { color:#7F8A95; font-size:12px; }
+.linkish { font-size:13px; margin-top:9px; }
+
+.dock { border-left:0; }
+.dock-head { height:64px; min-height:64px; padding:0 16px; border-bottom:1px solid var(--line); }
+.dock-head h2 { font-size:14px; letter-spacing:-.01em; }
+.dock-body { padding:8px 8px 0; background:#FBFCFD; }
+.comm-filter-bar { margin:0 0 8px; padding:3px; border:1px solid #E7EAED; border-radius:9px; background:#F3F5F7; }
+.comm-filter-btn { height:28px; border-radius:6px; font-size:10px; }
+.comm-item,.activity-item { border:1px solid transparent; border-radius:9px; margin-bottom:3px; background:#fff; }
+.comm-item:hover,.activity-item:hover { border-color:#E1E5E8; background:#F8F9FA; }
+
+@container desk (max-width:980px) {
+  .rec-head { padding:18px 22px; }
+  .middle-body { padding:16px 22px 36px; }
+  .rec-summary { min-width:260px; }
+}
+@container desk (max-width:700px) {
+  .rec-head { padding:17px 18px; }
+  .middle-body { padding:14px 18px 30px; }
+}
+
+
+
+:root {
+  --rail-w: 350px;
+  --dock-w: 360px;
+  --line: #E5E8EC;
+  --sunken: #F7F8FA;
+  --accent-soft: #F2F0EB;
+  --premium-ink:#17212B;
+  --premium-muted:#7A8793;
+  --premium-border:#E4E9ED;
+  --premium-soft:#F6F8F9;
+  --premium-teal:#0D7A70;
+  --premium-teal-dark:#075F58;
+  --premium-teal-soft:#E8F4F1;
+}
+
+body { color:var(--premium-ink); }
+button { -webkit-tap-highlight-color:transparent; }
+
+/* Shared control language */
+.btn, .icon-btn, .comm-filter-btn, .dock-tabs button, .dacts button, .composer button,
+.contact-email-all, .qacts button, .section-doc {
+  transition:background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.btn { min-height:36px; padding:0 14px; border:1px solid #DDE3E8; border-radius:9px; background:#fff; color:#36434E; font-size:12px; font-weight:650; box-shadow:0 1px 1px rgba(18,28,38,.03); }
+.btn:hover { border-color:#C8D1D8; background:#F8FAFB; box-shadow:0 3px 10px rgba(18,28,38,.07); transform:translateY(-1px); }
+.btn.primary { border-color:var(--premium-ink); background:var(--premium-ink); color:#fff; box-shadow:0 5px 14px rgba(23,33,43,.15); }
+.btn.primary:hover { background:#263440; border-color:#263440; }
+.icon-btn { width:34px; height:34px; border-radius:9px; border:1px solid transparent; }
+.icon-btn:hover { border-color:#E1E6EA; box-shadow:0 3px 9px rgba(18,28,38,.06); }
+
+/* Premium rail and record surfaces */
+.rail-head, .rec-head, .dock-tabs { background:#fff; }
+.rail-head { height:64px; min-height:64px; padding:0 18px; border-bottom:1px solid var(--line); box-shadow:0 1px 0 rgba(18,28,38,.02); }
+.lead-row.on .co { color:#102B2B; }
+.rec-head { min-height:112px; padding:22px 28px 20px; border-bottom:1px solid var(--line); background:linear-gradient(180deg,#FFFFFF 0%,#FCFDFD 100%); box-shadow:0 1px 14px rgba(18,28,38,.035); }
+.rec-avatar { width:42px; height:42px; flex-basis:42px; box-shadow:0 0 0 4px #F2F5F6; }
+.summary-item { padding:0; border:0; background:transparent; border-radius:0; text-align:center; box-shadow:none; }
+.summary-accent { background:transparent; border:0; box-shadow:none; }
+.paired-section { padding:17px 18px 19px; border:1px solid var(--line); border-radius:12px; background:#FBFCFD; box-shadow:0 2px 10px rgba(20,30,40,.025); }
+.paired-section:hover { border-color:var(--line); box-shadow:0 6px 18px rgba(20,30,40,.045); }
+
+/* Communications */
+.dock-tabs { gap:3px; padding:10px 10px 9px; border-bottom:1px solid var(--premium-border); }
+.dock-tabs button { min-height:30px; padding:0 9px; border:1px solid transparent; border-radius:7px; color:#82909B; font-size:10px; font-weight:700; }
+.dock-tabs button:hover { color:#34414D; background:#F5F7F8; }
+.dock-tabs button.on { color:var(--premium-ink); background:#EEF2F3; border-color:#E0E6E9; box-shadow:inset 0 1px 0 rgba(255,255,255,.8); }
+.comm-row { min-height:58px; padding:9px 10px; border:1px solid transparent; border-radius:10px; }
+.comm-row:hover { background:#F7F9FA; border-color:#E5EAED; box-shadow:0 3px 10px rgba(20,30,40,.04); }
+.comm-type-cell { width:24px; height:24px; border-radius:7px; background:#F0F3F4; color:#70808C; }
+.comm-row:hover .comm-type-cell { background:#E8F2F0; color:var(--premium-teal); }
+.comm-main strong { color:#2C3945; font-size:11.5px; }
+.comm-main small { color:#82909B; font-size:10.5px; }
+.comm-side time,.comm-side em { color:#98A3AC; font-size:9px; }
+
+/* Better touch targets in the central CRM without adding visual noise. */
+.qacts button, .contact-email-all { width:28px; height:28px; border-radius:7px; }
+.section-doc:hover { background:transparent; color:#9F2933; }
+
+@media (max-width:920px) {
+  .dacts .callgo { min-width:46px; padding:0 9px; }
+  .dacts .callgo span { display:none; }
+}
+
+/* Compact lead list: tighter rhythm, preserved interior breathing room. */
+.lead-row { grid-template-columns:34px minmax(0,1fr) auto; gap:11px; border:1px solid transparent; border-radius:10px; min-height:60px; padding:9px 12px; margin-bottom:2px; }
+.lead-row .co { font-size:13.5px; color:#252B32; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
+.lead-row .nm { font-size:12px; color:#74808B; margin-top:4px; }
+.lead-list .av { width:29px; height:29px; }
+.lead-row .right { gap:3px; padding-top:0; min-width:72px; }
+.lead-row .amt { font-size:12.5px; color:#3F4A55; line-height:1.25; }
+/* The list is compact; leave the selected record feeling anchored rather than heavy. */
+.lead-row.on { background:#F2F7F5; border-color:transparent; box-shadow:none; }
+/* Manus CRM dialer design. */
+.dialer { background:linear-gradient(135deg,#674B60 0%,#5C4454 52%,#493543 100%); border-top-color:#765B6D; box-shadow:0 -10px 24px rgba(65,42,58,.18),inset 0 1px 0 rgba(255,255,255,.1); }
+.dial-entry { border-color:#8B6B82; background:rgba(35,19,31,.24); box-shadow:inset 0 1px 1px rgba(255,255,255,.1),inset 0 -3px 7px rgba(30,12,24,.2); }
+.dial-entry:focus-within { border-color:#E3C8DA; box-shadow:0 0 0 2px rgba(246,221,238,.18),inset 0 1px 1px rgba(255,255,255,.16); }
+.dial-entry>span { color:#D9C5D3; }
+.dial-entry input { color:#FFF3FB; text-shadow:0 0 8px rgba(255,225,246,.24); }
+.dial-entry input::placeholder { color:#D1B7C8; }
+.dial-live { border-color:#956F89; background:linear-gradient(100deg,rgba(45,18,38,.3),rgba(255,255,255,.08)); }
+.dial-live strong { color:#FFF7FC; }
+.dial-live span { color:#E0CBD9; }
+.dial-live b { color:#FFF0FA; }
+.dacts button { border-color:#916F87; background:radial-gradient(circle at 35% 25%,#795A70,#513B4B 72%); color:#F4EAF1; box-shadow:inset 0 1px 1px rgba(255,255,255,.13),inset 0 -3px 5px rgba(45,20,38,.28),0 2px 4px rgba(40,20,34,.2); }
+.dacts button:hover { border-color:#D2B4CA; background:radial-gradient(circle at 35% 25%,#966F89,#604456 72%); color:#fff; }
+.dacts button.on { border-color:#E5C9DC; background:#F7ECF4; color:#5C4454; }
+.pad { background:#493543; border-color:#86677C; }
+.pad button { background:#604658; border-color:#8D6C82; }
+.pad button:hover { background:#805C75; border-color:#E0BFD5; }
+.dacts .callgo { background:radial-gradient(circle at 32% 24%,#70E89A 0%,#28C76F 42%,#0A8F4B 78%,#06683B 100%); }
+.dacts .hang { background:radial-gradient(circle at 32% 24%,#F27A7D,#C9444B 58%,#8D2933 100%); }
